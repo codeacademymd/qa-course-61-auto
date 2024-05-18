@@ -1,0 +1,158 @@
+package ui;
+
+import java.time.Duration;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WindowType;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.Test;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+@Test(priority=1)
+public class HW11 {
+
+	
+	ChromeDriver driver = new ChromeDriver();
+	
+  // Scenario 1 : Utilizatorul nu se poate inregistra
+	@Test(priority=1)
+	public void firstScenario() throws InterruptedException {
+		//When: Utilizatorul se afla pe pagina principala 
+		driver.get("https://utest.com/");
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+		Thread.sleep(3000);
+		//And: apasa butonul "Become a uTester" 
+		driver.findElement(By.xpath("//*[@id=\"mainContent\"]/div[1]/div[2]/div/a")).click();
+		Thread.sleep(2000);
+		//And:tilizatorul introduce un text mai mare de cât 2 caractere in input-ul "First name"
+		driver.findElement(By.id("firstName")).sendKeys("Test");
+		Thread.sleep(1000);
+		//And:tilizatorul introduce un text mai mare de cât 2 caractere in input-ul "Last name"
+		driver.findElement(By.id("lastName")).sendKeys("Test");
+		Thread.sleep(1000);
+		//And:Utilizatorul introduce o adresa de email nevalida  in input-ul "Email address:"
+		driver.findElement(By.id("email")).sendKeys("invalidemailaddress");
+		Thread.sleep(1000);
+		//And:Utilizatorul alege luna nasterii
+		WebElement ddBirthMonth = driver.findElement(By.id("birthMonth"));
+		Select selectedMonth = new Select(ddBirthMonth);
+		Thread.sleep(1000);
+		selectedMonth.selectByVisibleText("January");
+		//And:Utilizatorul alege luna nasterii
+		WebElement ddBirthDay = driver.findElement(By.id("birthDay"));
+		Select selectedDay = new Select(ddBirthDay);
+		Thread.sleep(1000);
+		selectedDay.selectByVisibleText("9");
+		//And:Utilizatorul alege anul nasterii
+		WebElement ddBirthYear = driver.findElement(By.id("birthYear"));
+		Select selectedYear = new Select(ddBirthYear);
+		Thread.sleep(1000);
+		selectedYear.selectByValue("2000");
+		
+		// THEN : Utilizatorul nu se poate inregistra 	
+		driver.findElement(By.xpath("//*[@id=\"regs_container\"]/div/div[2]/div/div[2]/div/form/div[2]/button/span")).click();
+		Thread.sleep(4000);
+			
+	}
+	
+	
+	// Scenario 2 : Utilizatorul poate sorta cautarea proiectelor dupa sistemul de operare
+	@Test(priority=2)
+	public void secondScenario() throws InterruptedException {
+		//When:Utilizatorul are deschisa in compartimentul "Projects Board"
+		driver.switchTo().newWindow(WindowType.TAB);
+		driver.navigate().to("https://utest.com/projects?tab=suggested");
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+		Thread.sleep(3000);
+		//And: Utilizatorul da click pe input-ul "OS"
+		driver.findElement(By.xpath("//*[@id=\"mainContent\"]/div[2]/div[1]/div[2]/div/div[1]/span")).click();
+		Thread.sleep(1000);
+		//And: Utilizatorul alege optiunea "Android"
+		driver.findElement(By.xpath("//*[@id=\"ui-select-choices-row-1-0\"]")).click();
+		Thread.sleep(3000);
+		//WHEN: Utilizatorul poate sorta cautarea proiectelor dupa sistemul de operare
+		
+ }
+	
+	// Scenario 3 : Utilizatorul poate sa citeasca raspuns la cele mai frecvente intrebari
+	@Test(priority=3)
+	public void thirdScenario() throws InterruptedException {
+		//When:Utilizatorul are deschisa pagina WEB in compartimentul "About Us"
+		driver.switchTo().newWindow(WindowType.TAB);
+		driver.navigate().to("https://utest.com/about-us");
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+		Thread.sleep(3000);
+		//And: Utilizatorul face scroll down pana la sectiunea "Frequently Asked Questions"
+		WebElement frequentQuestion = driver.findElement(By.xpath("//*[@id=\"faq\"]/div[2]/div[2]/ut-accordion/ut-accordion-group[7]/div/div[1]"));
+		Actions scrollAction = new Actions(driver);
+		scrollAction.moveToElement(frequentQuestion);
+		scrollAction.perform();
+		Thread.sleep(1000);
+		//And: Utilizatorul da click pe cele mai frecvente intrebari
+		driver.findElement(By.xpath("//*[@id=\"faq\"]/div[2]/div[2]/ut-accordion/ut-accordion-group[1]/div/div[1]")).click();
+		Thread.sleep(1500);
+		driver.findElement(By.xpath("//*[@id=\"faq\"]/div[2]/div[2]/ut-accordion/ut-accordion-group[2]/div/div[1]")).click();
+		Thread.sleep(1500);
+		driver.findElement(By.xpath("//*[@id=\"faq\"]/div[2]/div[2]/ut-accordion/ut-accordion-group[3]/div/div[1]")).click();
+		Thread.sleep(1500);
+		driver.findElement(By.xpath("//*[@id=\"faq\"]/div[2]/div[2]/ut-accordion/ut-accordion-group[4]/div/div[1]")).click();
+		Thread.sleep(1500);
+		driver.findElement(By.xpath("//*[@id=\"faq\"]/div[2]/div[2]/ut-accordion/ut-accordion-group[5]/div/div[1]")).click();
+		Thread.sleep(1500);
+		driver.findElement(By.xpath("//*[@id=\"faq\"]/div[2]/div[2]/ut-accordion/ut-accordion-group[6]/div/div[1]")).click();
+		Thread.sleep(1500);
+		driver.findElement(By.xpath("//*[@id=\"faq\"]/div[2]/div[2]/ut-accordion/ut-accordion-group[7]/div/div[1]")).click();
+		Thread.sleep(1500);
+		//Then:Utilizatorul poate citi raspunsurile la cele mai frecvente intrebari.
+		
+	}
+	
+	
+	// Scenario 4 : Utilizatorul poate sorta cautarea proiectelor dupa tara
+	@Test(priority=4)
+	public void fourthScenario() throws InterruptedException {
+		//When:Utilizatorul are deschisa pagina WEB in compartimentul "Projects Board"
+		driver.switchTo().newWindow(WindowType.TAB);
+		driver.navigate().to("https://utest.com/projects?tab=suggested");
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+		Thread.sleep(3000);
+		//And: Utilizatorul da click pe input-ul "Country"
+				driver.findElement(By.xpath("//*[@id=\"mainContent\"]/div[2]/div[1]/div[1]/div/div[1]/span")).click();
+				Thread.sleep(1000);
+				//And: Utilizatorul alege optiunea "Andora"
+				driver.findElement(By.xpath("//*[@id=\"ui-select-choices-row-0-6\"]")).click();
+				Thread.sleep(3000);
+	}
+	
+	
+	// Scenario 5 : Utilizatorul poate accesa pagina principala dand click pe home button  
+	@Test(priority=5)
+	public void firthScenario() throws InterruptedException {
+		//When:Utilizatorul are deschisa pagina WEB in compartimentul "Why uTest?"
+		driver.switchTo().newWindow(WindowType.TAB);
+		driver.navigate().to("https://utest.com/why-utest");
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+		Thread.sleep(3000);
+		//And: Utilizatorul localizeaza si da click pe home button
+		driver.findElement(By.xpath("/html/body/ui-view/unauthenticated-container/div/div/unauthenticated-header/header/div[1]/a/img")).click();
+		//Then Utilizatorul  poate accesa pagina principala
+	}
+	@AfterTest
+	public void end() throws InterruptedException {
+		Thread.sleep(3000);
+		driver.quit();
+	}
+	
+	
+}
