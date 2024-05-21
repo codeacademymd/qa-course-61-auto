@@ -1,0 +1,146 @@
+package ui;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Date;
+import java.util.Properties;
+import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WindowType;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
+import org.testng.annotations.Test;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import java.io.File;
+import org.apache.commons.io.FileUtils;
+import com.google.common.io.Files;
+import java.util.Properties;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+
+public class Homework7  {
+	ChromeDriver fr = new ChromeDriver();
+	// Utilizatorului ii permite sa treaca la urmatorul pas la crearea unui profil cu email deja creat (Bug)
+	@Test (description= "Already using email bug")
+	public void Bug () throws InterruptedException {
+		//Given:Se afla pe pagina principala
+		fr.get("https://utest.com/");
+		fr.manage().window().maximize();
+		fr.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+		//When selecteaza butonul "Become a Utester" 
+		fr.findElement(By.xpath("//*[@id=\"mainContent\"]/div[1]/div[2]/div/a")).click();
+		//And introduce datele 
+		fr.findElement(By.cssSelector("input[name='firstName']")).sendKeys("Marcel");
+		fr.findElement(By.cssSelector("input[name='lastName']")).sendKeys("Danu");
+		fr.findElement(By.cssSelector("input[name='email']")).sendKeys("marcel00230288@gmail.com");
+		
+		WebElement BirthMonth = fr.findElement(By.id("birthMonth"));
+		Select Month = new Select(BirthMonth);
+		Thread.sleep(1000);
+		Month.selectByVisibleText("April");
+		
+		WebElement BirthDay = fr.findElement(By.id("birthDay"));
+		Select Day = new Select(BirthDay);
+		Day.selectByVisibleText("21");
+		Thread.sleep(1000);
+		
+		WebElement BirthYear = fr.findElement(By.id("birthYear"));
+		Select Year = new Select(BirthYear);
+		Year.selectByVisibleText("1998");
+		//then utilizatorul primeste eroare ca este deja utuilizat asa Mail
+		fr.findElement(By.xpath("//*[@id=\"regs_container\"]/div/div[2]/div/div[2]/div/form/div[2]/button")).click();
+		
+			
+	}
+	@Test (description= "1.Logare pe site")
+	  public void Logare() throws IOException {
+		//Given: Utilizatorul se afla pe pagina principala de logare
+		fr.get("https://prod-auth.cloud.utest.com/auth/realms/applause/protocol/openid-connect/auth/?client_id=utestv2&redirect_uri=https%3A%2F%2Fwww.utest.com%2Foauth-login%2F&response_type=code");
+        fr.manage().window().maximize();
+      //When da click pe logare 
+        fr.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+        Properties prop = new Properties();
+        prop.load(new FileInputStream("Configuration\\ConfigSettings.properties"));
+        String username = prop.getProperty("username");
+        String password = prop.getProperty("password");
+  
+     //And introduce credentiale    
+        fr.findElement(By.id("username")).sendKeys(username);
+        fr.findElement(By.id("password")).sendKeys(password);
+     //Then:Se logheaza
+        fr.findElement(By.xpath("//*[@id=\"kc-login\"]")).click();
+    }
+	
+	
+	
+	@Test (description= "2.Utilizatorul poate alege proiecte urgente")
+	public void Project()  {
+		//Given: Utilizatorul se afla pe pagina principala 
+		fr.get("https://utest.com/");
+		fr.manage().window().maximize();
+		fr.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+		//When: Utilizatorul selecteaza tabul proiecte 
+        fr.findElement(By.xpath("/html/body/ui-view/unauthenticated-container/div/div/unauthenticated-header/header/div[3]/ul[1]/li[3]/unauthenticated-header-nav-item/a/span")).click();
+        //and: Utiliatorul da clikc pe urgent
+        fr.findElement(By.xpath("//*[@id=\"mainContent\"]/div[2]/div[2]/ul/li[3]/a")).click();
+        //Then este afisat proiectele urgente
+
+	}
+	
+	
+	@Test (description= "3.Utilizatorul poate da click pe un proiect random")
+	public void ProjectSelect()  {
+		//Given: Utilizatorul selecteaza un proiect
+		fr.get("https://utest.com/");
+		fr.manage().window().maximize();
+		fr.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+		//When: Utilizatorul selecteaza tabul proiecte 
+        fr.findElement(By.xpath("/html/body/ui-view/unauthenticated-container/div/div/unauthenticated-header/header/div[3]/ul[1]/li[3]/unauthenticated-header-nav-item/a/span")).click();
+        //and: Utiliatorul da click pe un proiect
+        fr.findElement(By.xpath("//*[@id=\"project_title_7820\"]")).click();
+        //Then este afisat rederictionat pe proiectul ales 
+
+	}
+	
+	@Test (description= "4.Utilizatorul primeste mesaj de eroare la restabilirea parolei cu email gresit inserat")
+	public void PasswordReset()  {
+		//Given: Utilizatorul se afla pe pagina principala
+		fr.get("https://utest.com/");
+		fr.manage().window().maximize();
+		fr.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+		//When: Da click pe login
+        fr.findElement(By.xpath("/html/body/ui-view/unauthenticated-container/div/div/unauthenticated-header/header/div[3]/ul[2]/li[1]/a")).click();
+        //and: Utiliatorul da click pe un proiect
+        fr.findElement(By.xpath("//*[@id=\"forgot-password\"]/a")).click();
+        //and Introduce email gresit
+        fr.findElement(By.xpath("//*[@id=\"username\"]")).sendKeys("marcel22@mail");
+       //then primim mesaj de eroare
+        fr.findElement(By.xpath("//*[@id=\"reset-password-btn\"]")).click();
+	}
+	
+	@Test (description= "5.Utilizatorul este redirectionat prin click pe Facebook icon")
+	public void Redirection()  {
+		//Given: Utilizatorul se afla pe pagina principala
+		fr.get("https://utest.com/");
+		fr.manage().window().maximize();
+		fr.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+		//when face scrolldown pan la facebook icon
+		WebElement imagineSection = fr.findElement(By.xpath("/html/body/ui-view/unauthenticated-container/div/unauthenticated-footer/footer/div[1]/div[2]/div[2]/div[1]"));
+		Actions scrollAction = new Actions(fr);
+		scrollAction.moveToElement(imagineSection);
+		scrollAction.perform();
+		//and da click pe facebook icon
+		fr.findElement(By.xpath("/html/body/ui-view/unauthenticated-container/div/unauthenticated-footer/footer/div[1]/div[2]/div[1]/a[2]/img")).click();
+		//then este redirecitonat pe facebook
+
+	}
+	
+}
